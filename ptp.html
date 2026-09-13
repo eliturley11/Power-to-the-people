@@ -1,0 +1,2269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SchoolVoice</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #ddd;
+      padding: 16px 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 23px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-button {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      background: #eee;
+    }
+
+    .admin-button {
+      background: #111827;
+      color: white;
+    }
+
+    .danger {
+      background: #dc2626;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+
+    main {
+      width: min(1000px, calc(100% - 30px));
+      margin: 30px auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+
+    .login-card {
+      max-width: 450px;
+      margin: 80px auto;
+      text-align: center;
+    }
+
+    .login-card h1 {
+      margin-bottom: 8px;
+    }
+
+    .login-card p {
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .google-button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 9px;
+      padding: 13px 20px;
+      font-size: 16px;
+      margin-top: 15px;
+    }
+
+    .beta-badge {
+      display: inline-block;
+      background: #fff3c4;
+      color: #665000;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      margin-bottom: 15px;
+    }
+
+    .vote-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .vote-number {
+      font-size: 38px;
+      font-weight: bold;
+    }
+
+    .muted {
+      color: #666;
+    }
+
+    .primary {
+      border: none;
+      background: #222;
+      color: white;
+      padding: 13px 20px;
+      border-radius: 9px;
+    }
+
+    .blue-button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 9px;
+      padding: 11px 18px;
+    }
+
+    .blue-button:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    input,
+    textarea,
+    select {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 11px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .form-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .secondary {
+      border: none;
+      background: #eee;
+      padding: 11px 16px;
+      border-radius: 8px;
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin: 25px 0 15px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+    }
+
+    .topics {
+      display: grid;
+      gap: 16px;
+    }
+
+    .topic-card {
+      background: white;
+      border-radius: 14px;
+      padding: 21px;
+    }
+
+    .topic-card h3 {
+      margin: 0 0 8px;
+    }
+
+    .topic-card p {
+      line-height: 1.5;
+    }
+
+    .topic-meta {
+      color: #777;
+      font-size: 13px;
+    }
+
+    .topic-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-top: 18px;
+    }
+
+    .topic-votes {
+      font-weight: bold;
+    }
+
+    .status {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      background: #e7f0ff;
+      font-size: 13px;
+    }
+
+    .status.Completed {
+      background: #dcfce7;
+    }
+
+    .status.Rejected {
+      background: #fee2e2;
+    }
+
+    .status.Under-Review {
+      background: #fef3c7;
+    }
+
+    .profile-header {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .avatar {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .profile-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .stat {
+      background: #f4f6f8;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 24px;
+    }
+
+    .admin-header {
+      background: #111827;
+      color: white;
+    }
+
+    .admin-topic {
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 12px;
+    }
+
+    .admin-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    .message.error {
+      display: block;
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .message.success {
+      display: block;
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    #appArea,
+    #profileView,
+    #adminView,
+    #ideaForm {
+      display: none;
+    }
+
+    @media(max-width: 650px) {
+      header {
+        align-items: flex-start;
+      }
+
+      .header-right {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .vote-banner,
+      .section-heading,
+      .profile-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .profile-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo" id="homeButton">
+    🗳️ SchoolVoice
+  </div>
+
+  <div class="header-right" id="signedInButtons" style="display:none;">
+
+    <button class="header-button admin-button" id="adminButton" style="display:none;">
+      🛡️ Admin Dashboard
+    </button>
+
+    <button class="header-button" id="profileButton">
+      Profile
+    </button>
+
+    <button class="header-button" id="logoutButton">
+      Sign Out
+    </button>
+
+  </div>
+</header>
+
+
+<main>
+
+  <!-- LOGIN -->
+
+  <div id="loginArea">
+
+    <div class="card login-card">
+
+      <div class="beta-badge">
+        Unofficial Student Beta
+      </div>
+
+      <h1>🗳️ SchoolVoice</h1>
+
+      <p>
+        Suggest improvements for your school and use
+        your weekly vote on the idea you support most.
+      </p>
+
+      <button class="google-button" id="loginButton">
+        Sign in with Google
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- MAIN APP -->
+
+  <div id="appArea">
+
+    <div id="mainView">
+
+      <div id="mainMessage" class="message"></div>
+
+      <section class="card vote-banner">
+
+        <div>
+
+          <h2>Your Weekly Vote</h2>
+
+          <div class="vote-number" id="voteAvailableText">
+            🗳️ 1
+          </div>
+
+          <div class="muted" id="voteExplanation">
+            You have one vote available this week.
+          </div>
+
+        </div>
+
+        <button class="primary" id="showIdeaButton">
+          + Submit an Idea
+        </button>
+
+      </section>
+
+
+      <!-- SUBMIT IDEA -->
+
+      <section class="card" id="ideaForm">
+
+        <h2>Submit an Idea</h2>
+
+        <input
+          id="ideaTitle"
+          maxlength="80"
+          placeholder="Idea title"
+        >
+
+        <textarea
+          id="ideaDescription"
+          maxlength="500"
+          placeholder="Explain your idea"
+        ></textarea>
+
+        <div class="form-buttons">
+
+          <button class="primary" id="submitIdeaButton">
+            Submit
+          </button>
+
+          <button class="secondary" id="cancelIdeaButton">
+            Cancel
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <div class="section-heading">
+
+        <h2>School Ideas</h2>
+
+        <select id="sortSelect">
+          <option value="votes">Most Votes</option>
+          <option value="newest">Newest</option>
+        </select>
+
+      </div>
+
+      <div class="topics" id="topicList"></div>
+
+    </div>
+
+
+    <!-- PROFILE -->
+
+    <div id="profileView">
+
+      <button class="secondary backHomeButton">
+        ← Back to Ideas
+      </button>
+
+      <section class="card">
+
+        <div class="profile-header">
+
+          <div class="avatar" id="profileAvatar">
+            S
+          </div>
+
+          <div>
+
+            <h2 id="profileName">
+              Student
+            </h2>
+
+            <div class="muted" id="profileEmail"></div>
+
+          </div>
+
+        </div>
+
+
+        <div class="profile-stats">
+
+          <div class="stat">
+            <strong id="profileVote">1</strong>
+            Weekly Vote
+          </div>
+
+          <div class="stat">
+            <strong id="profileIdeaCount">0</strong>
+            Ideas Submitted
+          </div>
+
+          <div class="stat">
+            <strong id="profileReceivedVotes">0</strong>
+            Votes on Your Ideas
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <section class="card">
+
+        <h2>Edit Display Name</h2>
+
+        <p class="muted">
+          Your email address is never displayed on idea cards.
+        </p>
+
+        <input
+          id="displayNameInput"
+          maxlength="30"
+          placeholder="Display name"
+        >
+
+        <button
+          class="blue-button"
+          id="saveNameButton"
+          style="margin-top:10px;"
+        >
+          Save
+        </button>
+
+      </section>
+
+
+      <section class="card">
+
+        <h2>Your Ideas</h2>
+
+        <div id="myIdeas"></div>
+
+      </section>
+
+    </div>
+
+
+    <!-- ADMIN -->
+
+    <div id="adminView">
+
+      <button class="secondary backHomeButton">
+        ← Back to Ideas
+      </button>
+
+      <section class="card admin-header">
+
+        <h1>🛡️ Admin Dashboard</h1>
+
+        <p>
+          Manage SchoolVoice topics and their statuses.
+        </p>
+
+      </section>
+
+      <div id="adminTopics"></div>
+
+    </div>
+
+  </div>
+
+</main>
+
+
+<script type="module">
+
+  /* =====================================================
+     FIREBASE IMPORTS
+     ===================================================== */
+
+  import {
+    initializeApp
+  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
+
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signInWithRedirect,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+
+
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    doc,
+    getDoc,
+    setDoc,
+    updateDoc,
+    deleteDoc,
+    onSnapshot,
+    runTransaction,
+    serverTimestamp,
+    Timestamp
+  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+
+  /* =====================================================
+     PASTE YOUR FIREBASE CONFIG HERE
+     ===================================================== */
+
+  const firebaseConfig = {
+
+    apiKey: "PASTE_YOUR_API_KEY_HERE",
+
+    authDomain: "PASTE_YOUR_AUTH_DOMAIN_HERE",
+
+    projectId: "PASTE_YOUR_PROJECT_ID_HERE",
+
+    storageBucket: "PASTE_YOUR_STORAGE_BUCKET_HERE",
+
+    messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID_HERE",
+
+    appId: "PASTE_YOUR_APP_ID_HERE"
+
+  };
+
+
+  /* =====================================================
+     START FIREBASE
+     ===================================================== */
+
+  const app =
+    initializeApp(firebaseConfig);
+
+  const auth =
+    getAuth(app);
+
+  const db =
+    getFirestore(app);
+
+  const googleProvider =
+    new GoogleAuthProvider();
+
+  googleProvider.setCustomParameters({
+    prompt: "select_account"
+  });
+
+
+  /* =====================================================
+     APP VARIABLES
+     ===================================================== */
+
+  let currentUser = null;
+
+  let currentDisplayName = "";
+
+  let topics = [];
+
+  let voteAvailable = true;
+
+  let isAdmin = false;
+
+  let unsubscribeTopics = null;
+
+  let unsubscribeVote = null;
+
+
+  /* =====================================================
+     HTML ELEMENTS
+     ===================================================== */
+
+  const loginArea =
+    document.getElementById("loginArea");
+
+  const appArea =
+    document.getElementById("appArea");
+
+  const mainView =
+    document.getElementById("mainView");
+
+  const profileView =
+    document.getElementById("profileView");
+
+  const adminView =
+    document.getElementById("adminView");
+
+  const signedInButtons =
+    document.getElementById("signedInButtons");
+
+  const adminButton =
+    document.getElementById("adminButton");
+
+  const topicList =
+    document.getElementById("topicList");
+
+  const ideaForm =
+    document.getElementById("ideaForm");
+
+
+  /* =====================================================
+     SCHOOL WEEK
+
+     Uses an Eastern-time-friendly Monday reset.
+     The security rules use the same calculation.
+     ===================================================== */
+
+  function getSchoolWeekStart() {
+
+    const shifted =
+      new Date(
+        Date.now() -
+        (5 * 60 * 60 * 1000)
+      );
+
+    const day =
+      shifted.getUTCDay();
+
+    const daysSinceMonday =
+      day === 0
+        ? 6
+        : day - 1;
+
+    shifted.setUTCDate(
+      shifted.getUTCDate() -
+      daysSinceMonday
+    );
+
+    shifted.setUTCHours(
+      0,
+      0,
+      0,
+      0
+    );
+
+    return shifted;
+  }
+
+
+  /* =====================================================
+     LOGIN
+     ===================================================== */
+
+  document
+    .getElementById("loginButton")
+    .addEventListener("click", async () => {
+
+      try {
+
+        await signInWithPopup(
+          auth,
+          googleProvider
+        );
+
+      }
+
+      catch (error) {
+
+        console.error(error);
+
+        if (
+          error.code ===
+          "auth/popup-blocked"
+        ) {
+
+          await signInWithRedirect(
+            auth,
+            googleProvider
+          );
+
+        }
+
+        else {
+
+          alert(
+            "Sign in failed: " +
+            error.message
+          );
+
+        }
+
+      }
+
+    });
+
+
+  document
+    .getElementById("logoutButton")
+    .addEventListener("click", async () => {
+
+      await signOut(auth);
+
+    });
+
+
+  /* =====================================================
+     AUTH STATE
+     ===================================================== */
+
+  onAuthStateChanged(
+    auth,
+    async user => {
+
+      if (unsubscribeTopics) {
+        unsubscribeTopics();
+      }
+
+      if (unsubscribeVote) {
+        unsubscribeVote();
+      }
+
+
+      if (!user) {
+
+        currentUser = null;
+
+        topics = [];
+
+        loginArea.style.display =
+          "block";
+
+        appArea.style.display =
+          "none";
+
+        signedInButtons.style.display =
+          "none";
+
+        return;
+      }
+
+
+      currentUser =
+        user;
+
+
+      loginArea.style.display =
+        "none";
+
+      appArea.style.display =
+        "block";
+
+      signedInButtons.style.display =
+        "flex";
+
+
+      await ensureUserProfile();
+
+      await checkAdmin();
+
+      subscribeToTopics();
+
+      subscribeToWeeklyVote();
+
+      showHome();
+
+    }
+  );
+
+
+  /* =====================================================
+     USER PROFILE
+     ===================================================== */
+
+  async function ensureUserProfile() {
+
+    const userRef =
+      doc(
+        db,
+        "users",
+        currentUser.uid
+      );
+
+
+    const snapshot =
+      await getDoc(userRef);
+
+
+    if (!snapshot.exists()) {
+
+      currentDisplayName =
+        currentUser.displayName ||
+        "Student";
+
+
+      await setDoc(
+        userRef,
+        {
+          displayName:
+            currentDisplayName,
+
+          email:
+            currentUser.email || "",
+
+          createdAt:
+            serverTimestamp()
+        }
+      );
+
+    }
+
+    else {
+
+      currentDisplayName =
+        snapshot.data().displayName ||
+        currentUser.displayName ||
+        "Student";
+
+    }
+
+
+    updateProfileDisplay();
+
+  }
+
+
+  function updateProfileDisplay() {
+
+    document.getElementById(
+      "profileName"
+    ).textContent =
+      currentDisplayName;
+
+
+    document.getElementById(
+      "profileEmail"
+    ).textContent =
+      currentUser?.email || "";
+
+
+    document.getElementById(
+      "profileAvatar"
+    ).textContent =
+      currentDisplayName
+        .charAt(0)
+        .toUpperCase();
+
+  }
+
+
+  document
+    .getElementById("saveNameButton")
+    .addEventListener("click", async () => {
+
+      const value =
+        document
+          .getElementById(
+            "displayNameInput"
+          )
+          .value
+          .trim();
+
+
+      if (
+        value.length < 1 ||
+        value.length > 30
+      ) {
+
+        alert(
+          "Your display name must be between 1 and 30 characters."
+        );
+
+        return;
+      }
+
+
+      await updateDoc(
+        doc(
+          db,
+          "users",
+          currentUser.uid
+        ),
+        {
+          displayName:
+            value
+        }
+      );
+
+
+      currentDisplayName =
+        value;
+
+
+      document.getElementById(
+        "displayNameInput"
+      ).value =
+        "";
+
+
+      updateProfileDisplay();
+
+      renderProfileIdeas();
+
+    });
+
+
+  /* =====================================================
+     ADMIN CHECK
+     ===================================================== */
+
+  async function checkAdmin() {
+
+    const adminRef =
+      doc(
+        db,
+        "admins",
+        currentUser.uid
+      );
+
+
+    const adminSnap =
+      await getDoc(adminRef);
+
+
+    isAdmin =
+      adminSnap.exists() &&
+      adminSnap.data().enabled === true;
+
+
+    adminButton.style.display =
+      isAdmin
+        ? "inline-block"
+        : "none";
+
+  }
+
+
+  /* =====================================================
+     LIVE TOPICS
+     ===================================================== */
+
+  function subscribeToTopics() {
+
+    unsubscribeTopics =
+      onSnapshot(
+
+        collection(
+          db,
+          "topics"
+        ),
+
+        snapshot => {
+
+          topics =
+            snapshot.docs.map(
+              item => ({
+                id: item.id,
+                ...item.data()
+              })
+            );
+
+
+          renderTopics();
+
+          renderProfileIdeas();
+
+          if (isAdmin) {
+            renderAdminTopics();
+          }
+
+        },
+
+        error => {
+
+          console.error(error);
+
+          showMessage(
+            "Could not load ideas. Check your Firestore Security Rules.",
+            "error"
+          );
+
+        }
+
+      );
+
+  }
+
+
+  /* =====================================================
+     WEEKLY VOTE STATE
+     ===================================================== */
+
+  function subscribeToWeeklyVote() {
+
+    const voteRef =
+      doc(
+        db,
+        "weeklyVotes",
+        currentUser.uid
+      );
+
+
+    unsubscribeVote =
+      onSnapshot(
+        voteRef,
+        snapshot => {
+
+          voteAvailable =
+            true;
+
+
+          if (snapshot.exists()) {
+
+            const data =
+              snapshot.data();
+
+
+            if (
+              data.weekStart &&
+              data.weekStart.toDate
+            ) {
+
+              const storedWeek =
+                data.weekStart
+                  .toDate()
+                  .getTime();
+
+
+              const currentWeek =
+                getSchoolWeekStart()
+                  .getTime();
+
+
+              if (
+                storedWeek >=
+                currentWeek
+              ) {
+
+                voteAvailable =
+                  false;
+
+              }
+
+            }
+
+          }
+
+
+          updateVoteDisplay();
+
+          renderTopics();
+
+        }
+      );
+
+  }
+
+
+  function updateVoteDisplay() {
+
+    document.getElementById(
+      "voteAvailableText"
+    ).textContent =
+      voteAvailable
+        ? "🗳️ 1"
+        : "✓ Used";
+
+
+    document.getElementById(
+      "voteExplanation"
+    ).textContent =
+      voteAvailable
+
+        ? "You have one vote available this week."
+
+        : "Your weekly vote has been used. A new vote becomes available Monday.";
+
+
+    document.getElementById(
+      "profileVote"
+    ).textContent =
+      voteAvailable
+        ? "1"
+        : "0";
+
+  }
+
+
+  /* =====================================================
+     CAST VOTE
+     ===================================================== */
+
+  async function castVote(topicId) {
+
+    if (
+      !currentUser ||
+      !voteAvailable
+    ) {
+
+      alert(
+        "You already used your vote this week."
+      );
+
+      return;
+
+    }
+
+
+    const voteRef =
+      doc(
+        db,
+        "weeklyVotes",
+        currentUser.uid
+      );
+
+
+    const topicRef =
+      doc(
+        db,
+        "topics",
+        topicId
+      );
+
+
+    const weekStart =
+      getSchoolWeekStart();
+
+
+    try {
+
+      await runTransaction(
+        db,
+        async transaction => {
+
+          /*
+             ALL READS FIRST
+          */
+
+          const voteSnapshot =
+            await transaction.get(
+              voteRef
+            );
+
+
+          const topicSnapshot =
+            await transaction.get(
+              topicRef
+            );
+
+
+          if (
+            !topicSnapshot.exists()
+          ) {
+
+            throw new Error(
+              "That topic no longer exists."
+            );
+
+          }
+
+
+          const topicData =
+            topicSnapshot.data();
+
+
+          if (
+            topicData.status !==
+            "Open"
+          ) {
+
+            throw new Error(
+              "Voting is closed on this topic."
+            );
+
+          }
+
+
+          if (
+            voteSnapshot.exists()
+          ) {
+
+            const previousWeek =
+              voteSnapshot
+                .data()
+                .weekStart;
+
+
+            if (
+              previousWeek &&
+              previousWeek
+                .toDate()
+                .getTime()
+                >=
+                weekStart.getTime()
+            ) {
+
+              throw new Error(
+                "You already used your vote this week."
+              );
+
+            }
+
+          }
+
+
+          /*
+             BOTH WRITES HAPPEN TOGETHER
+          */
+
+          transaction.set(
+            voteRef,
+            {
+              uid:
+                currentUser.uid,
+
+              topicId:
+                topicId,
+
+              weekStart:
+                Timestamp.fromDate(
+                  weekStart
+                ),
+
+              votedAt:
+                serverTimestamp()
+            }
+          );
+
+
+          transaction.update(
+            topicRef,
+            {
+              voteCount:
+                topicData.voteCount + 1
+            }
+          );
+
+        }
+
+      );
+
+
+      showMessage(
+        "Vote counted!",
+        "success"
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      alert(
+        error.message ||
+        "Your vote could not be counted."
+      );
+
+    }
+
+  }
+
+
+  /* =====================================================
+     RENDER TOPICS
+     ===================================================== */
+
+  document
+    .getElementById("sortSelect")
+    .addEventListener(
+      "change",
+      renderTopics
+    );
+
+
+  function renderTopics() {
+
+    topicList.innerHTML =
+      "";
+
+
+    let sorted =
+      [...topics];
+
+
+    const mode =
+      document.getElementById(
+        "sortSelect"
+      ).value;
+
+
+    if (
+      mode === "votes"
+    ) {
+
+      sorted.sort(
+        (a, b) =>
+          (b.voteCount || 0) -
+          (a.voteCount || 0)
+      );
+
+    }
+
+    else {
+
+      sorted.sort(
+        (a, b) => {
+
+          const bTime =
+            b.createdAt?.toMillis?.() || 0;
+
+          const aTime =
+            a.createdAt?.toMillis?.() || 0;
+
+          return bTime - aTime;
+
+        }
+      );
+
+    }
+
+
+    if (
+      sorted.length === 0
+    ) {
+
+      topicList.innerHTML =
+        `
+          <div class="card">
+            <h3>No ideas yet</h3>
+
+            <p class="muted">
+              Be the first student to submit one.
+            </p>
+          </div>
+        `;
+
+      return;
+
+    }
+
+
+    sorted.forEach(
+      topic => {
+
+        const card =
+          document.createElement(
+            "div"
+          );
+
+
+        card.className =
+          "topic-card";
+
+
+        const title =
+          document.createElement(
+            "h3"
+          );
+
+        title.textContent =
+          topic.title;
+
+
+        const description =
+          document.createElement(
+            "p"
+          );
+
+        description.textContent =
+          topic.description;
+
+
+        const meta =
+          document.createElement(
+            "div"
+          );
+
+        meta.className =
+          "topic-meta";
+
+        meta.textContent =
+          "Submitted by " +
+          (
+            topic.authorName ||
+            "Student"
+          );
+
+
+        const status =
+          document.createElement(
+            "span"
+          );
+
+        status.className =
+          "status " +
+          String(
+            topic.status || "Open"
+          ).replaceAll(
+            " ",
+            "-"
+          );
+
+        status.textContent =
+          topic.status || "Open";
+
+
+        const bottom =
+          document.createElement(
+            "div"
+          );
+
+        bottom.className =
+          "topic-bottom";
+
+
+        const count =
+          document.createElement(
+            "div"
+          );
+
+        count.className =
+          "topic-votes";
+
+        const voteCount =
+          topic.voteCount || 0;
+
+        count.textContent =
+          voteCount +
+          (
+            voteCount === 1
+              ? " vote"
+              : " votes"
+          );
+
+
+        const button =
+          document.createElement(
+            "button"
+          );
+
+        button.className =
+          "blue-button";
+
+
+        const topicOpen =
+          topic.status === "Open";
+
+
+        button.disabled =
+          !voteAvailable ||
+          !topicOpen;
+
+
+        if (!topicOpen) {
+
+          button.textContent =
+            "Voting Closed";
+
+        }
+
+        else if (!voteAvailable) {
+
+          button.textContent =
+            "Vote Used";
+
+        }
+
+        else {
+
+          button.textContent =
+            "Vote";
+
+        }
+
+
+        button.addEventListener(
+          "click",
+          () => castVote(topic.id)
+        );
+
+
+        bottom.append(
+          count,
+          button
+        );
+
+
+        card.append(
+          title,
+          description,
+          meta,
+          status,
+          bottom
+        );
+
+
+        topicList.appendChild(
+          card
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     CREATE IDEA
+     ===================================================== */
+
+  document
+    .getElementById("showIdeaButton")
+    .addEventListener("click", () => {
+
+      ideaForm.style.display =
+        "block";
+
+    });
+
+
+  document
+    .getElementById("cancelIdeaButton")
+    .addEventListener("click", () => {
+
+      ideaForm.style.display =
+        "none";
+
+    });
+
+
+  document
+    .getElementById("submitIdeaButton")
+    .addEventListener("click", async () => {
+
+      const title =
+        document
+          .getElementById(
+            "ideaTitle"
+          )
+          .value
+          .trim();
+
+
+      const description =
+        document
+          .getElementById(
+            "ideaDescription"
+          )
+          .value
+          .trim();
+
+
+      if (
+        title.length < 3 ||
+        title.length > 80
+      ) {
+
+        alert(
+          "The title must be between 3 and 80 characters."
+        );
+
+        return;
+
+      }
+
+
+      if (
+        description.length < 10 ||
+        description.length > 500
+      ) {
+
+        alert(
+          "The description must be between 10 and 500 characters."
+        );
+
+        return;
+
+      }
+
+
+      try {
+
+        await addDoc(
+          collection(
+            db,
+            "topics"
+          ),
+          {
+
+            title:
+              title,
+
+            description:
+              description,
+
+            authorId:
+              currentUser.uid,
+
+            authorName:
+              currentDisplayName,
+
+            voteCount:
+              0,
+
+            status:
+              "Open",
+
+            createdAt:
+              serverTimestamp()
+
+          }
+        );
+
+
+        document.getElementById(
+          "ideaTitle"
+        ).value =
+          "";
+
+
+        document.getElementById(
+          "ideaDescription"
+        ).value =
+          "";
+
+
+        ideaForm.style.display =
+          "none";
+
+
+        showMessage(
+          "Your idea was submitted!",
+          "success"
+        );
+
+      }
+
+      catch (error) {
+
+        console.error(error);
+
+        alert(
+          "Your idea couldn't be submitted: " +
+          error.message
+        );
+
+      }
+
+    });
+
+
+  /* =====================================================
+     PROFILE IDEAS
+     ===================================================== */
+
+  function renderProfileIdeas() {
+
+    if (!currentUser) {
+      return;
+    }
+
+
+    const mine =
+      topics.filter(
+        topic =>
+          topic.authorId ===
+          currentUser.uid
+      );
+
+
+    const totalVotes =
+      mine.reduce(
+        (total, topic) =>
+          total +
+          (topic.voteCount || 0),
+        0
+      );
+
+
+    document.getElementById(
+      "profileIdeaCount"
+    ).textContent =
+      mine.length;
+
+
+    document.getElementById(
+      "profileReceivedVotes"
+    ).textContent =
+      totalVotes;
+
+
+    const area =
+      document.getElementById(
+        "myIdeas"
+      );
+
+
+    area.innerHTML =
+      "";
+
+
+    if (
+      mine.length === 0
+    ) {
+
+      area.innerHTML =
+        `<p class="muted">
+          You haven't submitted any ideas yet.
+        </p>`;
+
+      return;
+
+    }
+
+
+    mine.forEach(
+      idea => {
+
+        const box =
+          document.createElement(
+            "div"
+          );
+
+
+        box.className =
+          "topic-card";
+
+
+        const title =
+          document.createElement(
+            "h3"
+          );
+
+        title.textContent =
+          idea.title;
+
+
+        const info =
+          document.createElement(
+            "p"
+          );
+
+        info.textContent =
+          (idea.voteCount || 0) +
+          " votes • " +
+          idea.status;
+
+
+        box.append(
+          title,
+          info
+        );
+
+
+        area.appendChild(
+          box
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     ADMIN DASHBOARD
+     ===================================================== */
+
+  adminButton.addEventListener(
+    "click",
+    () => {
+
+      if (!isAdmin) {
+        return;
+      }
+
+      showAdmin();
+
+    }
+  );
+
+
+  function renderAdminTopics() {
+
+    if (!isAdmin) {
+      return;
+    }
+
+
+    const area =
+      document.getElementById(
+        "adminTopics"
+      );
+
+
+    area.innerHTML =
+      "";
+
+
+    topics.forEach(
+      topic => {
+
+        const box =
+          document.createElement(
+            "div"
+          );
+
+
+        box.className =
+          "admin-topic";
+
+
+        const title =
+          document.createElement(
+            "h3"
+          );
+
+        title.textContent =
+          topic.title;
+
+
+        const description =
+          document.createElement(
+            "p"
+          );
+
+        description.textContent =
+          topic.description;
+
+
+        const info =
+          document.createElement(
+            "div"
+          );
+
+        info.className =
+          "muted";
+
+        info.textContent =
+          (topic.voteCount || 0) +
+          " votes • Submitted by " +
+          (topic.authorName || "Student");
+
+
+        const controls =
+          document.createElement(
+            "div"
+          );
+
+        controls.className =
+          "admin-controls";
+
+
+        const select =
+          document.createElement(
+            "select"
+          );
+
+
+        [
+          "Open",
+          "Under Review",
+          "Approved",
+          "In Progress",
+          "Completed",
+          "Rejected"
+        ].forEach(
+          status => {
+
+            const option =
+              document.createElement(
+                "option"
+              );
+
+            option.value =
+              status;
+
+            option.textContent =
+              status;
+
+            option.selected =
+              topic.status === status;
+
+            select.appendChild(
+              option
+            );
+
+          }
+        );
+
+
+        select.addEventListener(
+          "change",
+          async () => {
+
+            try {
+
+              await updateDoc(
+                doc(
+                  db,
+                  "topics",
+                  topic.id
+                ),
+                {
+                  status:
+                    select.value
+                }
+              );
+
+            }
+
+            catch (error) {
+
+              console.error(error);
+
+              alert(
+                "Status update failed."
+              );
+
+            }
+
+          }
+        );
+
+
+        const remove =
+          document.createElement(
+            "button"
+          );
+
+        remove.className =
+          "danger";
+
+        remove.textContent =
+          "Delete Topic";
+
+
+        remove.addEventListener(
+          "click",
+          async () => {
+
+            const confirmed =
+              confirm(
+                "Delete this topic permanently?"
+              );
+
+
+            if (!confirmed) {
+              return;
+            }
+
+
+            try {
+
+              await deleteDoc(
+                doc(
+                  db,
+                  "topics",
+                  topic.id
+                )
+              );
+
+            }
+
+            catch (error) {
+
+              console.error(error);
+
+              alert(
+                "Delete failed."
+              );
+
+            }
+
+          }
+        );
+
+
+        controls.append(
+          select,
+          remove
+        );
+
+
+        box.append(
+          title,
+          description,
+          info,
+          controls
+        );
+
+
+        area.appendChild(
+          box
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     PAGE NAVIGATION
+     ===================================================== */
+
+  document
+    .getElementById("homeButton")
+    .addEventListener(
+      "click",
+      showHome
+    );
+
+
+  document
+    .getElementById("profileButton")
+    .addEventListener(
+      "click",
+      showProfile
+    );
+
+
+  document
+    .querySelectorAll(
+      ".backHomeButton"
+    )
+    .forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          showHome
+        );
+
+      }
+    );
+
+
+  function hideViews() {
+
+    mainView.style.display =
+      "none";
+
+    profileView.style.display =
+      "none";
+
+    adminView.style.display =
+      "none";
+
+  }
+
+
+  function showHome() {
+
+    if (!currentUser) {
+      return;
+    }
+
+    hideViews();
+
+    mainView.style.display =
+      "block";
+
+  }
+
+
+  function showProfile() {
+
+    hideViews();
+
+    updateProfileDisplay();
+
+    renderProfileIdeas();
+
+    profileView.style.display =
+      "block";
+
+  }
+
+
+  function showAdmin() {
+
+    if (!isAdmin) {
+      return;
+    }
+
+    hideViews();
+
+    renderAdminTopics();
+
+    adminView.style.display =
+      "block";
+
+  }
+
+
+  /* =====================================================
+     MESSAGE
+     ===================================================== */
+
+  function showMessage(
+    text,
+    type
+  ) {
+
+    const area =
+      document.getElementById(
+        "mainMessage"
+      );
+
+
+    area.textContent =
+      text;
+
+
+    area.className =
+      "message " +
+      type;
+
+
+    setTimeout(
+      () => {
+
+        area.className =
+          "message";
+
+      },
+      3500
+    );
+
+  }
+
+</script>
+
+</body>
+</html>
