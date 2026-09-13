@@ -2,9 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>SchoolVoice</title>
+
+  <!-- SUPABASE JAVASCRIPT LIBRARY -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     * {
@@ -38,16 +45,16 @@
       justify-content: space-between;
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 20;
     }
 
     .logo {
-      font-size: 23px;
+      font-size: 24px;
       font-weight: bold;
       cursor: pointer;
     }
 
-    .header-right {
+    .header-buttons {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -55,8 +62,8 @@
 
     .header-button {
       border: none;
+      padding: 10px 15px;
       border-radius: 8px;
-      padding: 10px 14px;
       background: #eee;
     }
 
@@ -65,96 +72,31 @@
       color: white;
     }
 
-    .danger {
-      background: #dc2626;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 14px;
-    }
-
     main {
-      width: min(1000px, calc(100% - 30px));
-      margin: 30px auto;
+      max-width: 1000px;
+      margin: auto;
+      padding: 30px 20px;
     }
 
     .card {
       background: white;
+      padding: 23px;
       border-radius: 14px;
-      padding: 22px;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
-    .login-card {
-      max-width: 450px;
-      margin: 80px auto;
-      text-align: center;
+    .auth-card {
+      max-width: 500px;
+      margin: 50px auto;
     }
 
-    .login-card h1 {
+    .auth-card h1 {
       margin-bottom: 8px;
     }
 
-    .login-card p {
+    .auth-card p {
       color: #666;
       line-height: 1.5;
-    }
-
-    .google-button {
-      background: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 9px;
-      padding: 13px 20px;
-      font-size: 16px;
-      margin-top: 15px;
-    }
-
-    .beta-badge {
-      display: inline-block;
-      background: #fff3c4;
-      color: #665000;
-      padding: 5px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      margin-bottom: 15px;
-    }
-
-    .vote-banner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .vote-number {
-      font-size: 38px;
-      font-weight: bold;
-    }
-
-    .muted {
-      color: #666;
-    }
-
-    .primary {
-      border: none;
-      background: #222;
-      color: white;
-      padding: 13px 20px;
-      border-radius: 9px;
-    }
-
-    .blue-button {
-      background: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 9px;
-      padding: 11px 18px;
-    }
-
-    .blue-button:disabled {
-      background: #aaa;
-      cursor: not-allowed;
     }
 
     input,
@@ -176,17 +118,84 @@
       resize: vertical;
     }
 
-    .form-buttons {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
+    .primary-button {
+      border: none;
+      background: #2563eb;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 9px;
     }
 
-    .secondary {
+    .dark-button {
+      border: none;
+      background: #222;
+      color: white;
+      padding: 13px 20px;
+      border-radius: 9px;
+    }
+
+    .secondary-button {
       border: none;
       background: #eee;
       padding: 11px 16px;
       border-radius: 8px;
+    }
+
+    .danger-button {
+      border: none;
+      background: #dc2626;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+    }
+
+    .primary-button:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    .auth-buttons,
+    .form-buttons,
+    .admin-controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .message {
+      display: none;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    .message.success {
+      display: block;
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .message.error {
+      display: block;
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .vote-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .vote-big {
+      font-size: 38px;
+      font-weight: bold;
+    }
+
+    .muted {
+      color: #666;
     }
 
     .section-heading {
@@ -194,7 +203,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 15px;
-      margin: 25px 0 15px;
+      margin: 30px 0 16px;
     }
 
     .section-heading h2 {
@@ -209,11 +218,12 @@
     .topic-card {
       background: white;
       border-radius: 14px;
-      padding: 21px;
+      padding: 22px;
     }
 
     .topic-card h3 {
-      margin: 0 0 8px;
+      margin-top: 0;
+      margin-bottom: 8px;
     }
 
     .topic-card p {
@@ -221,8 +231,9 @@
     }
 
     .topic-meta {
-      color: #777;
       font-size: 13px;
+      color: #777;
+      margin-top: 12px;
     }
 
     .topic-bottom {
@@ -239,37 +250,37 @@
 
     .status {
       display: inline-block;
-      margin-top: 10px;
       padding: 5px 10px;
       border-radius: 20px;
-      background: #e7f0ff;
       font-size: 13px;
+      background: #e7f0ff;
+      margin-top: 10px;
     }
 
-    .status.Completed {
+    .status.completed {
       background: #dcfce7;
     }
 
-    .status.Rejected {
+    .status.rejected {
       background: #fee2e2;
     }
 
-    .status.Under-Review {
+    .status.under-review {
       background: #fef3c7;
     }
 
-    .profile-header {
+    .profile-top {
       display: flex;
-      gap: 18px;
       align-items: center;
+      gap: 18px;
     }
 
     .avatar {
-      width: 68px;
-      height: 68px;
-      border-radius: 50%;
+      width: 70px;
+      height: 70px;
       background: #2563eb;
       color: white;
+      border-radius: 50%;
       display: grid;
       place-items: center;
       font-size: 28px;
@@ -279,58 +290,43 @@
     .profile-stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 20px;
+      gap: 15px;
+      margin-top: 25px;
     }
 
     .stat {
       background: #f4f6f8;
-      padding: 15px;
-      border-radius: 10px;
+      border-radius: 11px;
+      padding: 18px;
       text-align: center;
     }
 
-    .stat strong {
+    .stat-number {
       display: block;
-      font-size: 24px;
+      font-size: 27px;
+      font-weight: bold;
     }
 
-    .admin-header {
+    .admin-heading {
       background: #111827;
       color: white;
     }
 
     .admin-topic {
       background: white;
+      padding: 20px;
       border-radius: 12px;
-      padding: 18px;
-      margin-bottom: 12px;
-    }
-
-    .admin-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 14px;
-    }
-
-    .message {
-      padding: 12px;
-      border-radius: 8px;
       margin-bottom: 15px;
-      display: none;
     }
 
-    .message.error {
-      display: block;
-      background: #fee2e2;
-      color: #991b1b;
+    .admin-topic h3 {
+      margin-top: 0;
     }
 
-    .message.success {
-      display: block;
-      background: #dcfce7;
-      color: #166534;
+    .empty {
+      text-align: center;
+      padding: 35px;
+      color: #666;
     }
 
     #appArea,
@@ -340,19 +336,19 @@
       display: none;
     }
 
-    @media(max-width: 650px) {
+    @media (max-width: 650px) {
       header {
         align-items: flex-start;
       }
 
-      .header-right {
+      .header-buttons {
         flex-direction: column;
         align-items: stretch;
       }
 
       .vote-banner,
       .section-heading,
-      .profile-header {
+      .profile-top {
         flex-direction: column;
         align-items: flex-start;
       }
@@ -360,99 +356,193 @@
       .profile-stats {
         grid-template-columns: 1fr;
       }
+
+      .section-heading select {
+        width: 100%;
+      }
     }
   </style>
 </head>
 
+
 <body>
 
 <header>
-  <div class="logo" id="homeButton">
+
+  <div
+    class="logo"
+    id="logoButton"
+  >
     🗳️ SchoolVoice
   </div>
 
-  <div class="header-right" id="signedInButtons" style="display:none;">
 
-    <button class="header-button admin-button" id="adminButton" style="display:none;">
-      🛡️ Admin Dashboard
+  <div
+    class="header-buttons"
+    id="signedInButtons"
+    style="display:none;"
+  >
+
+    <button
+      class="header-button admin-button"
+      id="adminButton"
+      style="display:none;"
+    >
+      🛡️ Admin
     </button>
 
-    <button class="header-button" id="profileButton">
+    <button
+      class="header-button"
+      id="profileButton"
+    >
       Profile
     </button>
 
-    <button class="header-button" id="logoutButton">
+    <button
+      class="header-button"
+      id="logoutButton"
+    >
       Sign Out
     </button>
 
   </div>
+
 </header>
 
 
 <main>
 
-  <!-- LOGIN -->
+  <!-- =============================================
+       SIGN IN / CREATE ACCOUNT
+       ============================================= -->
 
-  <div id="loginArea">
+  <section id="authArea">
 
-    <div class="card login-card">
-
-      <div class="beta-badge">
-        Unofficial Student Beta
-      </div>
+    <div class="card auth-card">
 
       <h1>🗳️ SchoolVoice</h1>
 
       <p>
-        Suggest improvements for your school and use
-        your weekly vote on the idea you support most.
+        Suggest improvements for your school and use your
+        weekly vote on the idea you support most.
       </p>
 
-      <button class="google-button" id="loginButton">
-        Sign in with Google
-      </button>
+      <div
+        id="authMessage"
+        class="message"
+      ></div>
+
+
+      <input
+        id="signupName"
+        type="text"
+        maxlength="30"
+        placeholder="Display name"
+      >
+
+
+      <input
+        id="authEmail"
+        type="email"
+        placeholder="Email address"
+      >
+
+
+      <input
+        id="authPassword"
+        type="password"
+        placeholder="Password"
+      >
+
+
+      <div class="auth-buttons">
+
+        <button
+          class="primary-button"
+          id="signInButton"
+        >
+          Sign In
+        </button>
+
+
+        <button
+          class="secondary-button"
+          id="signUpButton"
+        >
+          Create Account
+        </button>
+
+      </div>
 
     </div>
 
-  </div>
+  </section>
 
 
-  <!-- MAIN APP -->
+  <!-- =============================================
+       SIGNED IN APP
+       ============================================= -->
 
-  <div id="appArea">
+  <section id="appArea">
 
-    <div id="mainView">
 
-      <div id="mainMessage" class="message"></div>
+    <!-- =========================================
+         HOME
+         ========================================= -->
+
+    <div id="homeView">
+
+      <div
+        id="mainMessage"
+        class="message"
+      ></div>
+
 
       <section class="card vote-banner">
 
         <div>
 
-          <h2>Your Weekly Vote</h2>
+          <h2>
+            Your Weekly Vote
+          </h2>
 
-          <div class="vote-number" id="voteAvailableText">
+          <div
+            class="vote-big"
+            id="weeklyVoteText"
+          >
             🗳️ 1
           </div>
 
-          <div class="muted" id="voteExplanation">
+          <div
+            class="muted"
+            id="weeklyVoteDescription"
+          >
             You have one vote available this week.
           </div>
 
         </div>
 
-        <button class="primary" id="showIdeaButton">
+
+        <button
+          class="dark-button"
+          id="showIdeaButton"
+        >
           + Submit an Idea
         </button>
 
       </section>
 
 
-      <!-- SUBMIT IDEA -->
+      <!-- IDEA FORM -->
 
-      <section class="card" id="ideaForm">
+      <section
+        class="card"
+        id="ideaForm"
+      >
 
-        <h2>Submit an Idea</h2>
+        <h2>
+          Submit an Idea
+        </h2>
 
         <input
           id="ideaTitle"
@@ -466,13 +556,20 @@
           placeholder="Explain your idea"
         ></textarea>
 
+
         <div class="form-buttons">
 
-          <button class="primary" id="submitIdeaButton">
+          <button
+            class="primary-button"
+            id="submitIdeaButton"
+          >
             Submit
           </button>
 
-          <button class="secondary" id="cancelIdeaButton">
+          <button
+            class="secondary-button"
+            id="cancelIdeaButton"
+          >
             Cancel
           </button>
 
@@ -483,43 +580,75 @@
 
       <div class="section-heading">
 
-        <h2>School Ideas</h2>
+        <h2>
+          School Ideas
+        </h2>
 
-        <select id="sortSelect">
-          <option value="votes">Most Votes</option>
-          <option value="newest">Newest</option>
+
+        <select id="sortTopics">
+
+          <option value="votes">
+            Most Votes
+          </option>
+
+          <option value="newest">
+            Newest
+          </option>
+
         </select>
 
       </div>
 
-      <div class="topics" id="topicList"></div>
+
+      <div
+        class="topics"
+        id="topicList"
+      ></div>
 
     </div>
 
 
-    <!-- PROFILE -->
+    <!-- =========================================
+         PROFILE
+         ========================================= -->
 
     <div id="profileView">
 
-      <button class="secondary backHomeButton">
+      <button
+        class="secondary-button backHomeButton"
+      >
         ← Back to Ideas
       </button>
 
-      <section class="card">
 
-        <div class="profile-header">
+      <section
+        class="card"
+        style="margin-top:20px;"
+      >
 
-          <div class="avatar" id="profileAvatar">
+        <div class="profile-top">
+
+          <div
+            class="avatar"
+            id="profileAvatar"
+          >
             S
           </div>
 
+
           <div>
 
-            <h2 id="profileName">
+            <h2
+              id="profileName"
+              style="margin-bottom:5px;"
+            >
               Student
             </h2>
 
-            <div class="muted" id="profileEmail"></div>
+            <div
+              class="muted"
+              id="profileEmail"
+            ></div>
 
           </div>
 
@@ -529,18 +658,44 @@
         <div class="profile-stats">
 
           <div class="stat">
-            <strong id="profileVote">1</strong>
+
+            <span
+              class="stat-number"
+              id="profileVoteCount"
+            >
+              1
+            </span>
+
             Weekly Vote
+
           </div>
 
+
           <div class="stat">
-            <strong id="profileIdeaCount">0</strong>
+
+            <span
+              class="stat-number"
+              id="profileIdeaCount"
+            >
+              0
+            </span>
+
             Ideas Submitted
+
           </div>
 
+
           <div class="stat">
-            <strong id="profileReceivedVotes">0</strong>
+
+            <span
+              class="stat-number"
+              id="profileIdeaVotes"
+            >
+              0
+            </span>
+
             Votes on Your Ideas
+
           </div>
 
         </div>
@@ -550,24 +705,26 @@
 
       <section class="card">
 
-        <h2>Edit Display Name</h2>
+        <h2>
+          Edit Profile
+        </h2>
 
         <p class="muted">
-          Your email address is never displayed on idea cards.
+          Change the display name other students see.
         </p>
 
         <input
-          id="displayNameInput"
+          id="newDisplayName"
           maxlength="30"
-          placeholder="Display name"
+          placeholder="New display name"
         >
 
         <button
-          class="blue-button"
+          class="primary-button"
           id="saveNameButton"
-          style="margin-top:10px;"
+          style="margin-top:12px;"
         >
-          Save
+          Save Name
         </button>
 
       </section>
@@ -575,7 +732,9 @@
 
       <section class="card">
 
-        <h2>Your Ideas</h2>
+        <h2>
+          Your Ideas
+        </h2>
 
         <div id="myIdeas"></div>
 
@@ -584,17 +743,27 @@
     </div>
 
 
-    <!-- ADMIN -->
+    <!-- =========================================
+         ADMIN
+         ========================================= -->
 
     <div id="adminView">
 
-      <button class="secondary backHomeButton">
+      <button
+        class="secondary-button backHomeButton"
+      >
         ← Back to Ideas
       </button>
 
-      <section class="card admin-header">
 
-        <h1>🛡️ Admin Dashboard</h1>
+      <section
+        class="card admin-heading"
+        style="margin-top:20px;"
+      >
+
+        <h1>
+          🛡️ Admin Dashboard
+        </h1>
 
         <p>
           Manage SchoolVoice topics and their statuses.
@@ -602,101 +771,50 @@
 
       </section>
 
+
       <div id="adminTopics"></div>
 
     </div>
 
-  </div>
+  </section>
 
 </main>
 
 
-<script type="module">
+<script>
 
   /* =====================================================
-     FIREBASE IMPORTS
-     ===================================================== */
+     SUPABASE CONNECTION
+     =====================================================
 
-  import {
-    initializeApp
-  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+     The publishable key IS allowed in browser code.
 
-
-  import {
-    getAuth,
-    GoogleAuthProvider,
-    signInWithPopup,
-    signInWithRedirect,
-    onAuthStateChanged,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+     NEVER put an sb_secret key or service_role key here.
+  */
 
 
-  import {
-    getFirestore,
-    collection,
-    addDoc,
-    doc,
-    getDoc,
-    setDoc,
-    updateDoc,
-    deleteDoc,
-    onSnapshot,
-    runTransaction,
-    serverTimestamp,
-    Timestamp
-  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+  const SUPABASE_URL =
+    "https://gaxyncnwgpveewncrxhx.supabase.co";
+
+
+  const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_i3Rk7wiUdY2IDDH1tg0nA_AZ17r47a";
+
+
+  const sb =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
 
 
   /* =====================================================
-     PASTE YOUR FIREBASE CONFIG HERE
-     ===================================================== */
-
-  const firebaseConfig = {
-
-    apiKey: "PASTE_YOUR_API_KEY_HERE",
-
-    authDomain: "PASTE_YOUR_AUTH_DOMAIN_HERE",
-
-    projectId: "PASTE_YOUR_PROJECT_ID_HERE",
-
-    storageBucket: "PASTE_YOUR_STORAGE_BUCKET_HERE",
-
-    messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID_HERE",
-
-    appId: "PASTE_YOUR_APP_ID_HERE"
-
-  };
-
-
-  /* =====================================================
-     START FIREBASE
-     ===================================================== */
-
-  const app =
-    initializeApp(firebaseConfig);
-
-  const auth =
-    getAuth(app);
-
-  const db =
-    getFirestore(app);
-
-  const googleProvider =
-    new GoogleAuthProvider();
-
-  googleProvider.setCustomParameters({
-    prompt: "select_account"
-  });
-
-
-  /* =====================================================
-     APP VARIABLES
+     APP STATE
      ===================================================== */
 
   let currentUser = null;
 
-  let currentDisplayName = "";
+  let currentProfile = null;
 
   let topics = [];
 
@@ -704,276 +822,692 @@
 
   let isAdmin = false;
 
-  let unsubscribeTopics = null;
-
-  let unsubscribeVote = null;
+  let topicRealtimeChannel = null;
 
 
   /* =====================================================
      HTML ELEMENTS
      ===================================================== */
 
-  const loginArea =
-    document.getElementById("loginArea");
+  const authArea =
+    document.getElementById(
+      "authArea"
+    );
+
 
   const appArea =
-    document.getElementById("appArea");
+    document.getElementById(
+      "appArea"
+    );
 
-  const mainView =
-    document.getElementById("mainView");
+
+  const homeView =
+    document.getElementById(
+      "homeView"
+    );
+
 
   const profileView =
-    document.getElementById("profileView");
+    document.getElementById(
+      "profileView"
+    );
+
 
   const adminView =
-    document.getElementById("adminView");
+    document.getElementById(
+      "adminView"
+    );
+
 
   const signedInButtons =
-    document.getElementById("signedInButtons");
+    document.getElementById(
+      "signedInButtons"
+    );
+
 
   const adminButton =
-    document.getElementById("adminButton");
+    document.getElementById(
+      "adminButton"
+    );
+
 
   const topicList =
-    document.getElementById("topicList");
-
-  const ideaForm =
-    document.getElementById("ideaForm");
+    document.getElementById(
+      "topicList"
+    );
 
 
   /* =====================================================
-     SCHOOL WEEK
-
-     Uses an Eastern-time-friendly Monday reset.
-     The security rules use the same calculation.
+     EASTERN-TIME MONDAY
      ===================================================== */
 
-  function getSchoolWeekStart() {
+  function getCurrentWeekStart() {
 
-    const shifted =
-      new Date(
-        Date.now() -
-        (5 * 60 * 60 * 1000)
+    const formatter =
+      new Intl.DateTimeFormat(
+        "en-US",
+        {
+          timeZone:
+            "America/New_York",
+
+          year:
+            "numeric",
+
+          month:
+            "2-digit",
+
+          day:
+            "2-digit",
+
+          weekday:
+            "short"
+        }
       );
 
+
+    const pieces =
+      formatter.formatToParts(
+        new Date()
+      );
+
+
+    const values = {};
+
+
+    pieces.forEach(
+      piece => {
+
+        if (
+          piece.type !==
+          "literal"
+        ) {
+
+          values[
+            piece.type
+          ] =
+            piece.value;
+
+        }
+
+      }
+    );
+
+
+    const year =
+      Number(values.year);
+
+
+    const month =
+      Number(values.month);
+
+
     const day =
-      shifted.getUTCDay();
+      Number(values.day);
+
+
+    const weekdays = {
+
+      Sun: 0,
+      Mon: 1,
+      Tue: 2,
+      Wed: 3,
+      Thu: 4,
+      Fri: 5,
+      Sat: 6
+
+    };
+
+
+    const weekday =
+      weekdays[
+        values.weekday
+      ];
+
 
     const daysSinceMonday =
-      day === 0
+      weekday === 0
         ? 6
-        : day - 1;
+        : weekday - 1;
 
-    shifted.setUTCDate(
-      shifted.getUTCDate() -
+
+    const date =
+      new Date(
+        Date.UTC(
+          year,
+          month - 1,
+          day
+        )
+      );
+
+
+    date.setUTCDate(
+      date.getUTCDate() -
       daysSinceMonday
     );
 
-    shifted.setUTCHours(
-      0,
-      0,
-      0,
-      0
+
+    const yyyy =
+      date.getUTCFullYear();
+
+
+    const mm =
+      String(
+        date.getUTCMonth() + 1
+      ).padStart(
+        2,
+        "0"
+      );
+
+
+    const dd =
+      String(
+        date.getUTCDate()
+      ).padStart(
+        2,
+        "0"
+      );
+
+
+    return (
+      yyyy +
+      "-" +
+      mm +
+      "-" +
+      dd
     );
 
-    return shifted;
   }
 
 
   /* =====================================================
-     LOGIN
+     MESSAGES
      ===================================================== */
 
-  document
-    .getElementById("loginButton")
-    .addEventListener("click", async () => {
+  function showAuthMessage(
+    text,
+    type
+  ) {
 
-      try {
-
-        await signInWithPopup(
-          auth,
-          googleProvider
-        );
-
-      }
-
-      catch (error) {
-
-        console.error(error);
-
-        if (
-          error.code ===
-          "auth/popup-blocked"
-        ) {
-
-          await signInWithRedirect(
-            auth,
-            googleProvider
-          );
-
-        }
-
-        else {
-
-          alert(
-            "Sign in failed: " +
-            error.message
-          );
-
-        }
-
-      }
-
-    });
-
-
-  document
-    .getElementById("logoutButton")
-    .addEventListener("click", async () => {
-
-      await signOut(auth);
-
-    });
-
-
-  /* =====================================================
-     AUTH STATE
-     ===================================================== */
-
-  onAuthStateChanged(
-    auth,
-    async user => {
-
-      if (unsubscribeTopics) {
-        unsubscribeTopics();
-      }
-
-      if (unsubscribeVote) {
-        unsubscribeVote();
-      }
-
-
-      if (!user) {
-
-        currentUser = null;
-
-        topics = [];
-
-        loginArea.style.display =
-          "block";
-
-        appArea.style.display =
-          "none";
-
-        signedInButtons.style.display =
-          "none";
-
-        return;
-      }
-
-
-      currentUser =
-        user;
-
-
-      loginArea.style.display =
-        "none";
-
-      appArea.style.display =
-        "block";
-
-      signedInButtons.style.display =
-        "flex";
-
-
-      await ensureUserProfile();
-
-      await checkAdmin();
-
-      subscribeToTopics();
-
-      subscribeToWeeklyVote();
-
-      showHome();
-
-    }
-  );
-
-
-  /* =====================================================
-     USER PROFILE
-     ===================================================== */
-
-  async function ensureUserProfile() {
-
-    const userRef =
-      doc(
-        db,
-        "users",
-        currentUser.uid
+    const box =
+      document.getElementById(
+        "authMessage"
       );
 
 
-    const snapshot =
-      await getDoc(userRef);
+    box.textContent =
+      text;
 
 
-    if (!snapshot.exists()) {
+    box.className =
+      "message " +
+      type;
 
-      currentDisplayName =
-        currentUser.displayName ||
-        "Student";
+  }
 
 
-      await setDoc(
-        userRef,
-        {
-          displayName:
-            currentDisplayName,
+  function showMainMessage(
+    text,
+    type
+  ) {
 
-          email:
-            currentUser.email || "",
+    const box =
+      document.getElementById(
+        "mainMessage"
+      );
 
-          createdAt:
-            serverTimestamp()
+
+    box.textContent =
+      text;
+
+
+    box.className =
+      "message " +
+      type;
+
+
+    setTimeout(
+      () => {
+
+        box.className =
+          "message";
+
+      },
+
+      4000
+    );
+
+  }
+
+
+  /* =====================================================
+     CREATE ACCOUNT
+     ===================================================== */
+
+  document
+    .getElementById(
+      "signUpButton"
+    )
+    .addEventListener(
+      "click",
+      createAccount
+    );
+
+
+  async function createAccount() {
+
+    const displayName =
+      document
+        .getElementById(
+          "signupName"
+        )
+        .value
+        .trim();
+
+
+    const email =
+      document
+        .getElementById(
+          "authEmail"
+        )
+        .value
+        .trim();
+
+
+    const password =
+      document
+        .getElementById(
+          "authPassword"
+        )
+        .value;
+
+
+    if (
+      displayName.length < 1 ||
+      displayName.length > 30
+    ) {
+
+      showAuthMessage(
+        "Enter a display name between 1 and 30 characters.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    if (!email) {
+
+      showAuthMessage(
+        "Enter your email address.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    if (
+      password.length < 8
+    ) {
+
+      showAuthMessage(
+        "Use a password with at least 8 characters.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    const {
+      data,
+      error
+    } =
+      await sb.auth.signUp({
+
+        email:
+          email,
+
+        password:
+          password,
+
+        options: {
+
+          data: {
+
+            full_name:
+              displayName
+
+          }
+
         }
+
+      });
+
+
+    if (error) {
+
+      showAuthMessage(
+        error.message,
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    if (
+      data.user &&
+      !data.session
+    ) {
+
+      showAuthMessage(
+        "Account created! Check your email and confirm your account, then come back and sign in.",
+        "success"
       );
 
     }
 
     else {
 
-      currentDisplayName =
-        snapshot.data().displayName ||
-        currentUser.displayName ||
-        "Student";
+      showAuthMessage(
+        "Account created!",
+        "success"
+      );
 
     }
-
-
-    updateProfileDisplay();
 
   }
 
 
-  function updateProfileDisplay() {
+  /* =====================================================
+     SIGN IN
+     ===================================================== */
+
+  document
+    .getElementById(
+      "signInButton"
+    )
+    .addEventListener(
+      "click",
+      signIn
+    );
+
+
+  async function signIn() {
+
+    const email =
+      document
+        .getElementById(
+          "authEmail"
+        )
+        .value
+        .trim();
+
+
+    const password =
+      document
+        .getElementById(
+          "authPassword"
+        )
+        .value;
+
+
+    if (
+      !email ||
+      !password
+    ) {
+
+      showAuthMessage(
+        "Enter your email and password.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    const {
+      error
+    } =
+      await sb.auth
+        .signInWithPassword({
+
+          email:
+            email,
+
+          password:
+            password
+
+        });
+
+
+    if (error) {
+
+      showAuthMessage(
+        error.message,
+        "error"
+      );
+
+    }
+
+  }
+
+
+  /* =====================================================
+     SIGN OUT
+     ===================================================== */
+
+  document
+    .getElementById(
+      "logoutButton"
+    )
+    .addEventListener(
+      "click",
+      async () => {
+
+        await sb.auth.signOut();
+
+      }
+    );
+
+
+  /* =====================================================
+     SESSION
+     ===================================================== */
+
+  async function handleSession(
+    session
+  ) {
+
+    if (!session) {
+
+      currentUser =
+        null;
+
+      currentProfile =
+        null;
+
+      topics =
+        [];
+
+      voteAvailable =
+        true;
+
+      isAdmin =
+        false;
+
+
+      stopRealtime();
+
+
+      authArea.style.display =
+        "block";
+
+
+      appArea.style.display =
+        "none";
+
+
+      signedInButtons.style.display =
+        "none";
+
+
+      return;
+
+    }
+
+
+    currentUser =
+      session.user;
+
+
+    authArea.style.display =
+      "none";
+
+
+    appArea.style.display =
+      "block";
+
+
+    signedInButtons.style.display =
+      "flex";
+
+
+    await loadProfile();
+
+    await loadAdminStatus();
+
+    await loadVoteStatus();
+
+    await loadTopics();
+
+
+    startRealtime();
+
+    showHome();
+
+  }
+
+
+  sb.auth.onAuthStateChange(
+    (_event, session) => {
+
+      /*
+        Wait until the Auth callback finishes
+        before making more Supabase requests.
+      */
+
+      setTimeout(
+        () => {
+
+          handleSession(
+            session
+          );
+
+        },
+
+        0
+      );
+
+    }
+  );
+
+
+  async function startApp() {
+
+    const {
+      data
+    } =
+      await sb.auth.getSession();
+
+
+    await handleSession(
+      data.session
+    );
+
+  }
+
+
+  /* =====================================================
+     PROFILE
+     ===================================================== */
+
+  async function loadProfile() {
+
+    const {
+      data,
+      error
+    } =
+      await sb
+        .from(
+          "profiles"
+        )
+        .select(
+          "id, display_name"
+        )
+        .eq(
+          "id",
+          currentUser.id
+        )
+        .single();
+
+
+    if (error) {
+
+      console.error(
+        "Profile error:",
+        error
+      );
+
+      return;
+
+    }
+
+
+    currentProfile =
+      data;
+
+
+    updateProfileScreen();
+
+  }
+
+
+  function updateProfileScreen() {
+
+    if (
+      !currentUser ||
+      !currentProfile
+    ) {
+
+      return;
+
+    }
+
 
     document.getElementById(
       "profileName"
     ).textContent =
-      currentDisplayName;
+      currentProfile.display_name;
 
 
     document.getElementById(
       "profileEmail"
     ).textContent =
-      currentUser?.email || "";
+      currentUser.email;
 
 
     document.getElementById(
       "profileAvatar"
     ).textContent =
-      currentDisplayName
+      currentProfile
+        .display_name
         .charAt(0)
         .toUpperCase();
 
@@ -981,82 +1515,124 @@
 
 
   document
-    .getElementById("saveNameButton")
-    .addEventListener("click", async () => {
-
-      const value =
-        document
-          .getElementById(
-            "displayNameInput"
-          )
-          .value
-          .trim();
+    .getElementById(
+      "saveNameButton"
+    )
+    .addEventListener(
+      "click",
+      saveDisplayName
+    );
 
 
-      if (
-        value.length < 1 ||
-        value.length > 30
-      ) {
+  async function saveDisplayName() {
 
-        alert(
-          "Your display name must be between 1 and 30 characters."
-        );
-
-        return;
-      }
+    const newName =
+      document
+        .getElementById(
+          "newDisplayName"
+        )
+        .value
+        .trim();
 
 
-      await updateDoc(
-        doc(
-          db,
-          "users",
-          currentUser.uid
-        ),
-        {
-          displayName:
-            value
-        }
+    if (
+      newName.length < 1 ||
+      newName.length > 30
+    ) {
+
+      alert(
+        "Display names must be between 1 and 30 characters."
       );
 
+      return;
 
-      currentDisplayName =
-        value;
-
-
-      document.getElementById(
-        "displayNameInput"
-      ).value =
-        "";
+    }
 
 
-      updateProfileDisplay();
+    const {
+      error
+    } =
+      await sb
+        .from(
+          "profiles"
+        )
+        .update({
 
-      renderProfileIdeas();
+          display_name:
+            newName
 
-    });
+        })
+        .eq(
+          "id",
+          currentUser.id
+        );
+
+
+    if (error) {
+
+      alert(
+        "Could not change your name: " +
+        error.message
+      );
+
+      return;
+
+    }
+
+
+    currentProfile.display_name =
+      newName;
+
+
+    document.getElementById(
+      "newDisplayName"
+    ).value =
+      "";
+
+
+    updateProfileScreen();
+
+    await loadTopics();
+
+  }
 
 
   /* =====================================================
      ADMIN CHECK
      ===================================================== */
 
-  async function checkAdmin() {
+  async function loadAdminStatus() {
 
-    const adminRef =
-      doc(
-        db,
-        "admins",
-        currentUser.uid
+    const {
+      data,
+      error
+    } =
+      await sb
+        .from(
+          "admins"
+        )
+        .select(
+          "user_id"
+        )
+        .eq(
+          "user_id",
+          currentUser.id
+        )
+        .maybeSingle();
+
+
+    if (error) {
+
+      console.error(
+        "Admin check error:",
+        error
       );
 
-
-    const adminSnap =
-      await getDoc(adminRef);
+    }
 
 
     isAdmin =
-      adminSnap.exists() &&
-      adminSnap.data().enabled === true;
+      Boolean(data);
 
 
     adminButton.style.display =
@@ -1068,122 +1644,54 @@
 
 
   /* =====================================================
-     LIVE TOPICS
+     WEEKLY VOTE STATUS
      ===================================================== */
 
-  function subscribeToTopics() {
+  async function loadVoteStatus() {
 
-    unsubscribeTopics =
-      onSnapshot(
-
-        collection(
-          db,
-          "topics"
-        ),
-
-        snapshot => {
-
-          topics =
-            snapshot.docs.map(
-              item => ({
-                id: item.id,
-                ...item.data()
-              })
-            );
+    const weekStart =
+      getCurrentWeekStart();
 
 
-          renderTopics();
+    const {
+      data,
+      error
+    } =
+      await sb
+        .from(
+          "weekly_votes"
+        )
+        .select(
+          "topic_id"
+        )
+        .eq(
+          "user_id",
+          currentUser.id
+        )
+        .eq(
+          "week_start",
+          weekStart
+        )
+        .maybeSingle();
 
-          renderProfileIdeas();
 
-          if (isAdmin) {
-            renderAdminTopics();
-          }
+    if (error) {
 
-        },
-
-        error => {
-
-          console.error(error);
-
-          showMessage(
-            "Could not load ideas. Check your Firestore Security Rules.",
-            "error"
-          );
-
-        }
-
+      console.error(
+        "Weekly vote error:",
+        error
       );
 
-  }
+      return;
+
+    }
 
 
-  /* =====================================================
-     WEEKLY VOTE STATE
-     ===================================================== */
-
-  function subscribeToWeeklyVote() {
-
-    const voteRef =
-      doc(
-        db,
-        "weeklyVotes",
-        currentUser.uid
-      );
+    voteAvailable =
+      !data;
 
 
-    unsubscribeVote =
-      onSnapshot(
-        voteRef,
-        snapshot => {
-
-          voteAvailable =
-            true;
-
-
-          if (snapshot.exists()) {
-
-            const data =
-              snapshot.data();
-
-
-            if (
-              data.weekStart &&
-              data.weekStart.toDate
-            ) {
-
-              const storedWeek =
-                data.weekStart
-                  .toDate()
-                  .getTime();
-
-
-              const currentWeek =
-                getSchoolWeekStart()
-                  .getTime();
-
-
-              if (
-                storedWeek >=
-                currentWeek
-              ) {
-
-                voteAvailable =
-                  false;
-
-              }
-
-            }
-
-          }
-
-
-          updateVoteDisplay();
-
-          renderTopics();
-
-        }
-      );
+    updateVoteDisplay();
 
   }
 
@@ -1191,7 +1699,7 @@
   function updateVoteDisplay() {
 
     document.getElementById(
-      "voteAvailableText"
+      "weeklyVoteText"
     ).textContent =
       voteAvailable
         ? "🗳️ 1"
@@ -1199,17 +1707,17 @@
 
 
     document.getElementById(
-      "voteExplanation"
+      "weeklyVoteDescription"
     ).textContent =
       voteAvailable
 
         ? "You have one vote available this week."
 
-        : "Your weekly vote has been used. A new vote becomes available Monday.";
+        : "You already used this week's vote. Your next vote becomes available Monday.";
 
 
     document.getElementById(
-      "profileVote"
+      "profileVoteCount"
     ).textContent =
       voteAvailable
         ? "1"
@@ -1219,18 +1727,36 @@
 
 
   /* =====================================================
-     CAST VOTE
+     LOAD SHARED TOPICS
      ===================================================== */
 
-  async function castVote(topicId) {
+  async function loadTopics() {
 
-    if (
-      !currentUser ||
-      !voteAvailable
-    ) {
+    const {
+      data,
+      error
+    } =
+      await sb
+        .from(
+          "topics"
+        )
+        .select(
+          "id, author_id, title, description, vote_count, status, created_at"
+        );
 
-      alert(
-        "You already used your vote this week."
+
+    if (error) {
+
+      console.error(
+        "Topic error:",
+        error
+      );
+
+
+      showMainMessage(
+        "Could not load topics: " +
+        error.message,
+        "error"
       );
 
       return;
@@ -1238,155 +1764,94 @@
     }
 
 
-    const voteRef =
-      doc(
-        db,
-        "weeklyVotes",
-        currentUser.uid
-      );
+    const topicData =
+      data || [];
 
 
-    const topicRef =
-      doc(
-        db,
-        "topics",
-        topicId
-      );
+    const authorIds =
+      [
+        ...new Set(
+          topicData.map(
+            topic =>
+              topic.author_id
+          )
+        )
+      ];
 
 
-    const weekStart =
-      getSchoolWeekStart();
+    const profileMap =
+      {};
 
 
-    try {
+    if (
+      authorIds.length > 0
+    ) {
 
-      await runTransaction(
-        db,
-        async transaction => {
+      const {
+        data:
+          profileData,
 
-          /*
-             ALL READS FIRST
-          */
+        error:
+          profileError
 
-          const voteSnapshot =
-            await transaction.get(
-              voteRef
-            );
-
-
-          const topicSnapshot =
-            await transaction.get(
-              topicRef
-            );
-
-
-          if (
-            !topicSnapshot.exists()
-          ) {
-
-            throw new Error(
-              "That topic no longer exists."
-            );
-
-          }
-
-
-          const topicData =
-            topicSnapshot.data();
-
-
-          if (
-            topicData.status !==
-            "Open"
-          ) {
-
-            throw new Error(
-              "Voting is closed on this topic."
-            );
-
-          }
-
-
-          if (
-            voteSnapshot.exists()
-          ) {
-
-            const previousWeek =
-              voteSnapshot
-                .data()
-                .weekStart;
-
-
-            if (
-              previousWeek &&
-              previousWeek
-                .toDate()
-                .getTime()
-                >=
-                weekStart.getTime()
-            ) {
-
-              throw new Error(
-                "You already used your vote this week."
-              );
-
-            }
-
-          }
-
-
-          /*
-             BOTH WRITES HAPPEN TOGETHER
-          */
-
-          transaction.set(
-            voteRef,
-            {
-              uid:
-                currentUser.uid,
-
-              topicId:
-                topicId,
-
-              weekStart:
-                Timestamp.fromDate(
-                  weekStart
-                ),
-
-              votedAt:
-                serverTimestamp()
-            }
+      } =
+        await sb
+          .from(
+            "profiles"
+          )
+          .select(
+            "id, display_name"
+          )
+          .in(
+            "id",
+            authorIds
           );
 
 
-          transaction.update(
-            topicRef,
-            {
-              voteCount:
-                topicData.voteCount + 1
-            }
-          );
+      if (!profileError) {
 
-        }
+        (
+          profileData || []
+        ).forEach(
+          profile => {
 
-      );
+            profileMap[
+              profile.id
+            ] =
+              profile.display_name;
 
+          }
+        );
 
-      showMessage(
-        "Vote counted!",
-        "success"
-      );
+      }
 
     }
 
-    catch (error) {
 
-      console.error(error);
+    topics =
+      topicData.map(
+        topic => ({
 
-      alert(
-        error.message ||
-        "Your vote could not be counted."
+          ...topic,
+
+          authorName:
+            profileMap[
+              topic.author_id
+            ] ||
+            "Student"
+
+        })
       );
+
+
+    renderTopics();
+
+    renderProfileIdeas();
+
+
+    if (isAdmin) {
+
+      renderAdminTopics();
 
     }
 
@@ -1394,16 +1859,22 @@
 
 
   /* =====================================================
-     RENDER TOPICS
+     SORT TOPICS
      ===================================================== */
 
   document
-    .getElementById("sortSelect")
+    .getElementById(
+      "sortTopics"
+    )
     .addEventListener(
       "change",
       renderTopics
     );
 
+
+  /* =====================================================
+     RENDER TOPICS
+     ===================================================== */
 
   function renderTopics() {
 
@@ -1415,20 +1886,21 @@
       [...topics];
 
 
-    const mode =
+    const sortMode =
       document.getElementById(
-        "sortSelect"
+        "sortTopics"
       ).value;
 
 
     if (
-      mode === "votes"
+      sortMode ===
+      "votes"
     ) {
 
       sorted.sort(
         (a, b) =>
-          (b.voteCount || 0) -
-          (a.voteCount || 0)
+          b.vote_count -
+          a.vote_count
       );
 
     }
@@ -1436,17 +1908,13 @@
     else {
 
       sorted.sort(
-        (a, b) => {
-
-          const bTime =
-            b.createdAt?.toMillis?.() || 0;
-
-          const aTime =
-            a.createdAt?.toMillis?.() || 0;
-
-          return bTime - aTime;
-
-        }
+        (a, b) =>
+          new Date(
+            b.created_at
+          ) -
+          new Date(
+            a.created_at
+          )
       );
 
     }
@@ -1456,16 +1924,24 @@
       sorted.length === 0
     ) {
 
-      topicList.innerHTML =
-        `
-          <div class="card">
-            <h3>No ideas yet</h3>
+      const empty =
+        document.createElement(
+          "div"
+        );
 
-            <p class="muted">
-              Be the first student to submit one.
-            </p>
-          </div>
-        `;
+
+      empty.className =
+        "card empty";
+
+
+      empty.textContent =
+        "There are no ideas yet. Be the first student to submit one!";
+
+
+      topicList.appendChild(
+        empty
+      );
+
 
       return;
 
@@ -1473,6 +1949,582 @@
 
 
     sorted.forEach(
+      topic => {
+
+        topicList.appendChild(
+          createTopicCard(
+            topic
+          )
+        );
+
+      }
+    );
+
+  }
+
+
+  function createTopicCard(
+    topic
+  ) {
+
+    const card =
+      document.createElement(
+        "article"
+      );
+
+
+    card.className =
+      "topic-card";
+
+
+    const title =
+      document.createElement(
+        "h3"
+      );
+
+
+    title.textContent =
+      topic.title;
+
+
+    const description =
+      document.createElement(
+        "p"
+      );
+
+
+    description.textContent =
+      topic.description;
+
+
+    const author =
+      document.createElement(
+        "div"
+      );
+
+
+    author.className =
+      "topic-meta";
+
+
+    author.textContent =
+      "Submitted by " +
+      topic.authorName;
+
+
+    const status =
+      document.createElement(
+        "span"
+      );
+
+
+    status.className =
+      "status " +
+      String(
+        topic.status
+      )
+        .toLowerCase()
+        .replaceAll(
+          " ",
+          "-"
+        );
+
+
+    status.textContent =
+      topic.status;
+
+
+    const bottom =
+      document.createElement(
+        "div"
+      );
+
+
+    bottom.className =
+      "topic-bottom";
+
+
+    const votes =
+      document.createElement(
+        "div"
+      );
+
+
+    votes.className =
+      "topic-votes";
+
+
+    votes.textContent =
+      topic.vote_count +
+      (
+        topic.vote_count === 1
+          ? " vote"
+          : " votes"
+      );
+
+
+    const voteButton =
+      document.createElement(
+        "button"
+      );
+
+
+    voteButton.className =
+      "primary-button";
+
+
+    if (
+      topic.status !==
+      "Open"
+    ) {
+
+      voteButton.textContent =
+        "Voting Closed";
+
+
+      voteButton.disabled =
+        true;
+
+    }
+
+    else if (
+      !voteAvailable
+    ) {
+
+      voteButton.textContent =
+        "Vote Used";
+
+
+      voteButton.disabled =
+        true;
+
+    }
+
+    else {
+
+      voteButton.textContent =
+        "Vote";
+
+
+      voteButton.addEventListener(
+        "click",
+        () =>
+          castVote(
+            topic.id,
+            voteButton
+          )
+      );
+
+    }
+
+
+    bottom.append(
+      votes,
+      voteButton
+    );
+
+
+    card.append(
+      title,
+      description,
+      author,
+      status,
+      bottom
+    );
+
+
+    return card;
+
+  }
+
+
+  /* =====================================================
+     CAST VOTE
+     ===================================================== */
+
+  async function castVote(
+    topicId,
+    button
+  ) {
+
+    if (
+      !currentUser ||
+      !voteAvailable
+    ) {
+
+      return;
+
+    }
+
+
+    button.disabled =
+      true;
+
+
+    button.textContent =
+      "Voting...";
+
+
+    const {
+      error
+    } =
+      await sb
+        .from(
+          "weekly_votes"
+        )
+        .insert({
+
+          user_id:
+            currentUser.id,
+
+          week_start:
+            getCurrentWeekStart(),
+
+          topic_id:
+            topicId
+
+        });
+
+
+    if (error) {
+
+      console.error(
+        error
+      );
+
+
+      await loadVoteStatus();
+
+
+      renderTopics();
+
+
+      if (
+        error.code ===
+        "23505"
+      ) {
+
+        alert(
+          "You already used your vote this week."
+        );
+
+      }
+
+      else {
+
+        alert(
+          "Your vote could not be counted: " +
+          error.message
+        );
+
+      }
+
+
+      return;
+
+    }
+
+
+    voteAvailable =
+      false;
+
+
+    updateVoteDisplay();
+
+    renderTopics();
+
+
+    showMainMessage(
+      "Your vote was counted!",
+      "success"
+    );
+
+
+    /*
+      The database trigger increases
+      the topic vote_count.
+    */
+
+    await loadTopics();
+
+  }
+
+
+  /* =====================================================
+     IDEA FORM
+     ===================================================== */
+
+  document
+    .getElementById(
+      "showIdeaButton"
+    )
+    .addEventListener(
+      "click",
+      () => {
+
+        document.getElementById(
+          "ideaForm"
+        ).style.display =
+          "block";
+
+      }
+    );
+
+
+  document
+    .getElementById(
+      "cancelIdeaButton"
+    )
+    .addEventListener(
+      "click",
+      () => {
+
+        document.getElementById(
+          "ideaForm"
+        ).style.display =
+          "none";
+
+      }
+    );
+
+
+  /* =====================================================
+     SUBMIT IDEA
+     ===================================================== */
+
+  document
+    .getElementById(
+      "submitIdeaButton"
+    )
+    .addEventListener(
+      "click",
+      submitIdea
+    );
+
+
+  async function submitIdea() {
+
+    const title =
+      document
+        .getElementById(
+          "ideaTitle"
+        )
+        .value
+        .trim();
+
+
+    const description =
+      document
+        .getElementById(
+          "ideaDescription"
+        )
+        .value
+        .trim();
+
+
+    if (
+      title.length < 3 ||
+      title.length > 80
+    ) {
+
+      alert(
+        "Your title must be between 3 and 80 characters."
+      );
+
+      return;
+
+    }
+
+
+    if (
+      description.length < 10 ||
+      description.length > 500
+    ) {
+
+      alert(
+        "Your description must be between 10 and 500 characters."
+      );
+
+      return;
+
+    }
+
+
+    const button =
+      document.getElementById(
+        "submitIdeaButton"
+      );
+
+
+    button.disabled =
+      true;
+
+
+    button.textContent =
+      "Submitting...";
+
+
+    const {
+      error
+    } =
+      await sb
+        .from(
+          "topics"
+        )
+        .insert({
+
+          author_id:
+            currentUser.id,
+
+          title:
+            title,
+
+          description:
+            description
+
+        });
+
+
+    button.disabled =
+      false;
+
+
+    button.textContent =
+      "Submit";
+
+
+    if (error) {
+
+      console.error(
+        error
+      );
+
+
+      alert(
+        "Your idea could not be submitted: " +
+        error.message
+      );
+
+
+      return;
+
+    }
+
+
+    document.getElementById(
+      "ideaTitle"
+    ).value =
+      "";
+
+
+    document.getElementById(
+      "ideaDescription"
+    ).value =
+      "";
+
+
+    document.getElementById(
+      "ideaForm"
+    ).style.display =
+      "none";
+
+
+    showMainMessage(
+      "Your idea was submitted!",
+      "success"
+    );
+
+
+    await loadTopics();
+
+  }
+
+
+  /* =====================================================
+     PROFILE IDEAS
+     ===================================================== */
+
+  function renderProfileIdeas() {
+
+    if (!currentUser) {
+
+      return;
+
+    }
+
+
+    const mine =
+      topics.filter(
+        topic =>
+          topic.author_id ===
+          currentUser.id
+      );
+
+
+    const totalVotes =
+      mine.reduce(
+        (
+          total,
+          topic
+        ) =>
+          total +
+          topic.vote_count,
+
+        0
+      );
+
+
+    document.getElementById(
+      "profileIdeaCount"
+    ).textContent =
+      mine.length;
+
+
+    document.getElementById(
+      "profileIdeaVotes"
+    ).textContent =
+      totalVotes;
+
+
+    const container =
+      document.getElementById(
+        "myIdeas"
+      );
+
+
+    container.innerHTML =
+      "";
+
+
+    if (
+      mine.length === 0
+    ) {
+
+      const message =
+        document.createElement(
+          "p"
+        );
+
+
+      message.className =
+        "muted";
+
+
+      message.textContent =
+        "You haven't submitted any ideas yet.";
+
+
+      container.appendChild(
+        message
+      );
+
+
+      return;
+
+    }
+
+
+    mine.forEach(
       topic => {
 
         const card =
@@ -1485,408 +2537,45 @@
           "topic-card";
 
 
+        card.style.marginBottom =
+          "12px";
+
+
         const title =
           document.createElement(
             "h3"
           );
+
 
         title.textContent =
           topic.title;
 
 
-        const description =
+        const information =
           document.createElement(
             "p"
           );
 
-        description.textContent =
-          topic.description;
 
-
-        const meta =
-          document.createElement(
-            "div"
-          );
-
-        meta.className =
-          "topic-meta";
-
-        meta.textContent =
-          "Submitted by " +
+        information.textContent =
+          topic.vote_count +
           (
-            topic.authorName ||
-            "Student"
-          );
-
-
-        const status =
-          document.createElement(
-            "span"
-          );
-
-        status.className =
-          "status " +
-          String(
-            topic.status || "Open"
-          ).replaceAll(
-            " ",
-            "-"
-          );
-
-        status.textContent =
-          topic.status || "Open";
-
-
-        const bottom =
-          document.createElement(
-            "div"
-          );
-
-        bottom.className =
-          "topic-bottom";
-
-
-        const count =
-          document.createElement(
-            "div"
-          );
-
-        count.className =
-          "topic-votes";
-
-        const voteCount =
-          topic.voteCount || 0;
-
-        count.textContent =
-          voteCount +
-          (
-            voteCount === 1
+            topic.vote_count === 1
               ? " vote"
               : " votes"
-          );
-
-
-        const button =
-          document.createElement(
-            "button"
-          );
-
-        button.className =
-          "blue-button";
-
-
-        const topicOpen =
-          topic.status === "Open";
-
-
-        button.disabled =
-          !voteAvailable ||
-          !topicOpen;
-
-
-        if (!topicOpen) {
-
-          button.textContent =
-            "Voting Closed";
-
-        }
-
-        else if (!voteAvailable) {
-
-          button.textContent =
-            "Vote Used";
-
-        }
-
-        else {
-
-          button.textContent =
-            "Vote";
-
-        }
-
-
-        button.addEventListener(
-          "click",
-          () => castVote(topic.id)
-        );
-
-
-        bottom.append(
-          count,
-          button
-        );
+          ) +
+          " • " +
+          topic.status;
 
 
         card.append(
           title,
-          description,
-          meta,
-          status,
-          bottom
+          information
         );
 
 
-        topicList.appendChild(
+        container.appendChild(
           card
-        );
-
-      }
-    );
-
-  }
-
-
-  /* =====================================================
-     CREATE IDEA
-     ===================================================== */
-
-  document
-    .getElementById("showIdeaButton")
-    .addEventListener("click", () => {
-
-      ideaForm.style.display =
-        "block";
-
-    });
-
-
-  document
-    .getElementById("cancelIdeaButton")
-    .addEventListener("click", () => {
-
-      ideaForm.style.display =
-        "none";
-
-    });
-
-
-  document
-    .getElementById("submitIdeaButton")
-    .addEventListener("click", async () => {
-
-      const title =
-        document
-          .getElementById(
-            "ideaTitle"
-          )
-          .value
-          .trim();
-
-
-      const description =
-        document
-          .getElementById(
-            "ideaDescription"
-          )
-          .value
-          .trim();
-
-
-      if (
-        title.length < 3 ||
-        title.length > 80
-      ) {
-
-        alert(
-          "The title must be between 3 and 80 characters."
-        );
-
-        return;
-
-      }
-
-
-      if (
-        description.length < 10 ||
-        description.length > 500
-      ) {
-
-        alert(
-          "The description must be between 10 and 500 characters."
-        );
-
-        return;
-
-      }
-
-
-      try {
-
-        await addDoc(
-          collection(
-            db,
-            "topics"
-          ),
-          {
-
-            title:
-              title,
-
-            description:
-              description,
-
-            authorId:
-              currentUser.uid,
-
-            authorName:
-              currentDisplayName,
-
-            voteCount:
-              0,
-
-            status:
-              "Open",
-
-            createdAt:
-              serverTimestamp()
-
-          }
-        );
-
-
-        document.getElementById(
-          "ideaTitle"
-        ).value =
-          "";
-
-
-        document.getElementById(
-          "ideaDescription"
-        ).value =
-          "";
-
-
-        ideaForm.style.display =
-          "none";
-
-
-        showMessage(
-          "Your idea was submitted!",
-          "success"
-        );
-
-      }
-
-      catch (error) {
-
-        console.error(error);
-
-        alert(
-          "Your idea couldn't be submitted: " +
-          error.message
-        );
-
-      }
-
-    });
-
-
-  /* =====================================================
-     PROFILE IDEAS
-     ===================================================== */
-
-  function renderProfileIdeas() {
-
-    if (!currentUser) {
-      return;
-    }
-
-
-    const mine =
-      topics.filter(
-        topic =>
-          topic.authorId ===
-          currentUser.uid
-      );
-
-
-    const totalVotes =
-      mine.reduce(
-        (total, topic) =>
-          total +
-          (topic.voteCount || 0),
-        0
-      );
-
-
-    document.getElementById(
-      "profileIdeaCount"
-    ).textContent =
-      mine.length;
-
-
-    document.getElementById(
-      "profileReceivedVotes"
-    ).textContent =
-      totalVotes;
-
-
-    const area =
-      document.getElementById(
-        "myIdeas"
-      );
-
-
-    area.innerHTML =
-      "";
-
-
-    if (
-      mine.length === 0
-    ) {
-
-      area.innerHTML =
-        `<p class="muted">
-          You haven't submitted any ideas yet.
-        </p>`;
-
-      return;
-
-    }
-
-
-    mine.forEach(
-      idea => {
-
-        const box =
-          document.createElement(
-            "div"
-          );
-
-
-        box.className =
-          "topic-card";
-
-
-        const title =
-          document.createElement(
-            "h3"
-          );
-
-        title.textContent =
-          idea.title;
-
-
-        const info =
-          document.createElement(
-            "p"
-          );
-
-        info.textContent =
-          (idea.voteCount || 0) +
-          " votes • " +
-          idea.status;
-
-
-        box.append(
-          title,
-          info
-        );
-
-
-        area.appendChild(
-          box
         );
 
       }
@@ -1901,45 +2590,39 @@
 
   adminButton.addEventListener(
     "click",
-    () => {
-
-      if (!isAdmin) {
-        return;
-      }
-
-      showAdmin();
-
-    }
+    showAdmin
   );
 
 
   function renderAdminTopics() {
 
     if (!isAdmin) {
+
       return;
+
     }
 
 
-    const area =
+    const container =
       document.getElementById(
         "adminTopics"
       );
 
 
-    area.innerHTML =
+    container.innerHTML =
       "";
 
 
     topics.forEach(
       topic => {
 
-        const box =
+        const card =
           document.createElement(
             "div"
           );
 
 
-        box.className =
+        card.className =
           "admin-topic";
 
 
@@ -1947,6 +2630,7 @@
           document.createElement(
             "h3"
           );
+
 
         title.textContent =
           topic.title;
@@ -1957,22 +2641,25 @@
             "p"
           );
 
+
         description.textContent =
           topic.description;
 
 
         const info =
           document.createElement(
-            "div"
+            "p"
           );
+
 
         info.className =
           "muted";
 
+
         info.textContent =
-          (topic.voteCount || 0) +
+          topic.vote_count +
           " votes • Submitted by " +
-          (topic.authorName || "Student");
+          topic.authorName;
 
 
         const controls =
@@ -1980,24 +2667,30 @@
             "div"
           );
 
+
         controls.className =
           "admin-controls";
 
 
-        const select =
+        const statusSelect =
           document.createElement(
             "select"
           );
 
 
-        [
+        const statuses = [
+
           "Open",
           "Under Review",
           "Approved",
           "In Progress",
           "Completed",
           "Rejected"
-        ].forEach(
+
+        ];
+
+
+        statuses.forEach(
           status => {
 
             const option =
@@ -2005,16 +2698,21 @@
                 "option"
               );
 
+
             option.value =
               status;
+
 
             option.textContent =
               status;
 
-            option.selected =
-              topic.status === status;
 
-            select.appendChild(
+            option.selected =
+              topic.status ===
+              status;
+
+
+            statusSelect.appendChild(
               option
             );
 
@@ -2022,53 +2720,63 @@
         );
 
 
-        select.addEventListener(
+        statusSelect.addEventListener(
           "change",
           async () => {
 
-            try {
+            const {
+              error
+            } =
+              await sb
+                .from(
+                  "topics"
+                )
+                .update({
 
-              await updateDoc(
-                doc(
-                  db,
-                  "topics",
-                  topic.id
-                ),
-                {
                   status:
-                    select.value
-                }
-              );
+                    statusSelect.value
 
-            }
+                })
+                .eq(
+                  "id",
+                  topic.id
+                );
 
-            catch (error) {
 
-              console.error(error);
+            if (error) {
 
               alert(
-                "Status update failed."
+                "Could not change the topic status: " +
+                error.message
               );
 
+
+              return;
+
             }
+
+
+            await loadTopics();
 
           }
         );
 
 
-        const remove =
+        const deleteButton =
           document.createElement(
             "button"
           );
 
-        remove.className =
-          "danger";
 
-        remove.textContent =
+        deleteButton.className =
+          "danger-button";
+
+
+        deleteButton.textContent =
           "Delete Topic";
 
 
-        remove.addEventListener(
+        deleteButton.addEventListener(
           "click",
           async () => {
 
@@ -2079,43 +2787,52 @@
 
 
             if (!confirmed) {
+
               return;
+
             }
 
 
-            try {
-
-              await deleteDoc(
-                doc(
-                  db,
-                  "topics",
-                  topic.id
+            const {
+              error
+            } =
+              await sb
+                .from(
+                  "topics"
                 )
-              );
+                .delete()
+                .eq(
+                  "id",
+                  topic.id
+                );
 
-            }
 
-            catch (error) {
-
-              console.error(error);
+            if (error) {
 
               alert(
-                "Delete failed."
+                "Could not delete the topic: " +
+                error.message
               );
 
+
+              return;
+
             }
+
+
+            await loadTopics();
 
           }
         );
 
 
         controls.append(
-          select,
-          remove
+          statusSelect,
+          deleteButton
         );
 
 
-        box.append(
+        card.append(
           title,
           description,
           info,
@@ -2123,8 +2840,8 @@
         );
 
 
-        area.appendChild(
-          box
+        container.appendChild(
+          card
         );
 
       }
@@ -2134,11 +2851,74 @@
 
 
   /* =====================================================
+     REALTIME UPDATES
+
+     If another student submits an idea or votes,
+     Supabase tells this browser that "topics" changed.
+     ===================================================== */
+
+  function startRealtime() {
+
+    stopRealtime();
+
+
+    topicRealtimeChannel =
+      sb
+        .channel(
+          "schoolvoice-live-topics"
+        )
+        .on(
+          "postgres_changes",
+
+          {
+            event:
+              "*",
+
+            schema:
+              "public",
+
+            table:
+              "topics"
+          },
+
+          async () => {
+
+            await loadTopics();
+
+          }
+        )
+        .subscribe();
+
+  }
+
+
+  function stopRealtime() {
+
+    if (
+      topicRealtimeChannel
+    ) {
+
+      sb.removeChannel(
+        topicRealtimeChannel
+      );
+
+
+      topicRealtimeChannel =
+        null;
+
+    }
+
+  }
+
+
+  /* =====================================================
      PAGE NAVIGATION
      ===================================================== */
 
   document
-    .getElementById("homeButton")
+    .getElementById(
+      "logoButton"
+    )
     .addEventListener(
       "click",
       showHome
@@ -2146,7 +2926,9 @@
 
 
   document
-    .getElementById("profileButton")
+    .getElementById(
+      "profileButton"
+    )
     .addEventListener(
       "click",
       showProfile
@@ -2171,11 +2953,13 @@
 
   function hideViews() {
 
-    mainView.style.display =
+    homeView.style.display =
       "none";
+
 
     profileView.style.display =
       "none";
+
 
     adminView.style.display =
       "none";
@@ -2186,24 +2970,40 @@
   function showHome() {
 
     if (!currentUser) {
+
       return;
+
     }
+
 
     hideViews();
 
-    mainView.style.display =
+
+    homeView.style.display =
       "block";
+
+
+    renderTopics();
 
   }
 
 
   function showProfile() {
 
+    if (!currentUser) {
+
+      return;
+
+    }
+
+
     hideViews();
 
-    updateProfileDisplay();
+
+    updateProfileScreen();
 
     renderProfileIdeas();
+
 
     profileView.style.display =
       "block";
@@ -2214,12 +3014,17 @@
   function showAdmin() {
 
     if (!isAdmin) {
+
       return;
+
     }
+
 
     hideViews();
 
+
     renderAdminTopics();
+
 
     adminView.style.display =
       "block";
@@ -2228,40 +3033,10 @@
 
 
   /* =====================================================
-     MESSAGE
+     START SCHOOLVOICE
      ===================================================== */
 
-  function showMessage(
-    text,
-    type
-  ) {
-
-    const area =
-      document.getElementById(
-        "mainMessage"
-      );
-
-
-    area.textContent =
-      text;
-
-
-    area.className =
-      "message " +
-      type;
-
-
-    setTimeout(
-      () => {
-
-        area.className =
-          "message";
-
-      },
-      3500
-    );
-
-  }
+  startApp();
 
 </script>
 
